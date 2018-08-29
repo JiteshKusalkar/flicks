@@ -1,0 +1,56 @@
+version: "2.1"
+
+services:
+  flicks_server:
+    build: ./server
+    image: flicks_server_image
+    ports:
+      - 3051:3051
+
+  flicks_client:
+    build: ./client
+    image: flicks_client_image
+    ports:
+      - 3052:3052
+
+  nginx:
+    build: ./nginx
+    image: nginx_image
+    ports:
+      - 88:88
+    links:
+      - flicks_server:flicks_server
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+
+  movie:
+    build: ./microservices/movie
+    image: movie_image
+    ports:
+      - 10020:10020
+
+  csv_upload:
+    build: ./microservices/csv-upload
+    image: csv_upload_image
+    ports:
+      - 10021:10021
+
+  extras:
+    build: ./microservices/extras
+    image: extras_image
+    ports:
+      - 10022:10022
+
+  socket_node:
+    build: ./microservices/socket
+    image: socket_node_image
+    ports:
+      - 10023:10023

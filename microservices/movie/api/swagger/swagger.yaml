@@ -1,0 +1,168 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Movie App
+# during dev, should point to your local machine
+host: localhost:10020
+# basePath prefixes all resource paths 
+basePath: /api
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /v1/movie:
+    x-swagger-router-controller: movie
+    get:
+      description: Returns the list of all movies
+      operationId: getAll
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: returns all movies
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Movie"
+            
+        "404":
+          description: No results found
+          
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/MovieErrorResponse"
+            
+    delete:
+      description: Returns the list of all movies
+      operationId: deleteAll
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: delete all movies
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: All files deleted
+            
+        "404":
+          description: No results found
+          
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/MovieErrorResponse"
+  
+  /v1/movie/{query}:
+    x-swagger-router-controller: movie
+    get:
+      description: Returns the list of movies corresponding to search query
+      operationId: getByName
+      produces:
+      - application/json
+      parameters:
+        - in: path
+          name: query
+          type: string
+          required: true
+          description: Keywords matching movie name
+      responses:
+        "200":
+          description: returns movie list corresponding to search query
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Movie"
+            
+        "404":
+          description: Error
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Booking Id doesn't exist
+          
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/MovieErrorResponse"
+
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  Movie:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Movie name
+      status:
+        type: string
+        description: Movie release status
+      rating:
+        type: string
+        description: Movie rating
+      description:
+        type: string
+        description: Movie description
+      showTimings:
+        type: array
+        items:
+          type: string
+      releaseDate:
+        type: string
+        description: Movie release date
+      showEndDate:
+        type: string
+        description: Movie end date
+      trailerUrl:
+        type: string
+        description: Trailer URL
+      posterUrl:
+        type: string
+        description: Poster Url
+      cast:
+        type: array
+        description: Movie cast and crew
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Name of the crew member
+            photourl:
+              type: string
+              description: Photo URL
+            role:
+              type: string
+              description: Role of the crew member
+      budget:
+        type: string
+        description: Movie budget
+      genre:
+        type: string
+        description: Movie genre
+      censorCertificate:
+        type: string
+        description: Censorship certificate
+  MovieErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
